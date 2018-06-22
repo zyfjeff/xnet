@@ -16,7 +16,7 @@ namespace net {
 class Channel;
 
 // Base class for IO Multiplexing
-// This class doesn't own the Channel objects
+// This class doesn't own the Channel object
 class Poller {
  public:
   using ChanneList = std::vector<Channel*>;

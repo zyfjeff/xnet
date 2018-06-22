@@ -15,7 +15,8 @@ namespace net {
 
 const int EventLoop::kPollTimeMs = 50000;
 
-EventLoop::EventLoop() : looping_(false), thread_id_(std::this_thread::get_id()) {
+EventLoop::EventLoop() : looping_(false), 
+    thread_id_(std::this_thread::get_id()), poller_(std::make_unique<Poller>(this)) {
   LOG(INFO) << "EventLoop created " << this << " in thread " << thread_id_;
   if (details::gt_loop_in_this_thread) {
     LOG(FATAL) << "Another EventLoop " << details::gt_loop_in_this_thread

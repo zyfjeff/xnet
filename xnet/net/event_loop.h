@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <vector>
+#include <cassert>
 
 #include "xnet/base/macros.h"
 
@@ -33,12 +34,14 @@ class EventLoop {
   static const int kPollTimeMs;
   using ChannelList = std::vector<Channel*>;
 
-  void AbortNotInLoopThread();
+  void AbortNotInLoopThread() {
+    assert(false);
+  }
   bool looping_;
   bool quit_;
-  std::unique_ptr<Poller> poller_;
   const std::thread::id thread_id_;
   ChannelList active_channels_;
+  std::unique_ptr<Poller> poller_;
 
   DISALLOW_COPY_AND_ASSIGN(EventLoop);
 };

@@ -13,6 +13,7 @@ Poller::~Poller() { }
 
 std::chrono::milliseconds Poller::Poll(int timeout_ms,
                                       ChanneList* active_channels) {
+  LOG(INFO) << "Starting poll" << poll_fds_.size();
   int num_events = ::poll(&*poll_fds_.begin(), poll_fds_.size(), timeout_ms);
   auto now = std::chrono::system_clock::now();
   if (num_events > 0) {
