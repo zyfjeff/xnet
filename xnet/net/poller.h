@@ -1,5 +1,5 @@
-#ifndef XNET_SRC_BASE_POLLER_H_
-#define XNET_SRC_BASE_POLLER_H_
+#ifndef XNET_NET_POLLER_H_
+#define XNET_NET_POLLER_H_
 
 #include <map>
 #include <vector>
@@ -46,4 +46,4 @@ class Poller {
 }  // namespace net
 }  // namespace xnet
 
-#endif  // XNET_SRC_BASE_POLLER_H_
+#endif  // XNET_NET_POLLER_H_

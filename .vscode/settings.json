@@ -62,6 +62,10 @@
     "sstream": "cpp",
     "streambuf": "cpp",
     "system_error": "cpp",
-    "typeindex": "cpp"
+    "typeindex": "cpp",
+    "iomanip": "cpp",
+    "iostream": "cpp",
+    "numeric": "cpp",
+    "*.inc": "cpp"
   }
 }
