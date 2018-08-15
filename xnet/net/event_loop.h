@@ -44,6 +44,8 @@ class EventLoop {
   void QueueInLoop(const Functor& cb);
   void RunInLoop(const Functor& cb);
   void UpdateChannel(Channel* channel);
+  void RemoveChannel(Channel* channel);
+  
   bool IsInLoopThread() const { return thread_id_ == std::this_thread::get_id(); }
   static EventLoop* GetEventLoopOfCurrentThread();
  private:

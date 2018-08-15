@@ -34,11 +34,16 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   }
 
   void ConnectEstablished();
+  void ConnectDestroyed();
 
  private:
   enum class StateE { kConnecting, kConnected, };
   void SetState(StateE s) { state_ = s; }
   void HandleRead();
+  void HandleWrite();
+  void HandleClose();
+  void HandleError();
+  void SetCloseConnection(const CloseCallback& cb);
 
   EventLoop* loop_;
   std::string name_;
@@ -51,6 +56,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   ConnectionCallback connection_callback_;
   MessageCallback msg_callback_;
+  CloseCallback close_callback_;
 };
 
 typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;

@@ -43,6 +43,7 @@ class SocketUtils {
 
   static int CreateNonblockingOrDie();
   static struct sockaddr_in GetLocalAddr(int sockfd);
+  static int GetSocketError(int sockfd);
   static void BindOrDie(int sockfd, const struct sockaddr_in* addr);
   static void ListenOrDie(int sockfd);
   static int  Accept(int sockfd, struct sockaddr_in* addr);

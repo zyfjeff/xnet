@@ -97,6 +97,12 @@ void EventLoop::UpdateChannel(Channel* channel) {
   poller_->UpdateChannel(channel);
 }
 
+void EventLoop::RemoveChannel(Channel* channel) {
+  assert(channel->loop() == this);
+  AssertInLoopThread();
+  poller_->RemoveChannel(channel);
+}
+
 void EventLoop::Loop() {
   ABSL_ASSERT(!looping_);
   AssertInLoopThread();

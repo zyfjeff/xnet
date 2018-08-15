@@ -41,6 +41,7 @@ class Channel {
   int index() { return index_; }
   void set_index(int idx) { index_ = idx; }
   EventLoop* loop() { return loop_; }
+  void DisableAll() { return ; }
 
  private:
   static const int kNoneEvent;

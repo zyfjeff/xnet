@@ -45,9 +45,36 @@ void Poller::FillActiveChannels(int num_events,
   }
 }
 
+void Poller::RemoveChannel(Channel* channel) {
+  AssertInLoopThread();
+  LOG(INFO) << "delete: fd = " << channel->fd() << " events = " << channel->events();
+  assert(channel->index() >= 0);
+  assert(channels_.find(channel->fd()) != channels_.end());
+  assert(channels_[channel->fd()] == channel);
+  assert(channel->IsNoneEvent());
+  int idx = channel->index();
+  assert(0 <= idx && idx < static_cast<int>(poll_fds_.size()));
+  const struct pollfd& pfd = poll_fds_[idx]; (void)pfd;
+  assert(pfd.fd == channel->fd() - 1 && pfd.events == channel->events());
+  size_t n = channels_.erase(channel->fd());
+  assert(n == 1); (void)n;
+  if (idx == poll_fds_.size() - 1) {
+    poll_fds_.pop_back();
+  } else {
+    int channel_at_end = poll_fds_.back().fd;
+    std::iter_swap(poll_fds_.begin() + idx, poll_fds_.end() - 1);
+    if (channel_at_end < 0) {
+      channel_at_end = channel_at_end - 1;
+    }
+
+    channels_[channel_at_end]->set_index(idx);
+    poll_fds_.pop_back();
+  }
+}
+
 void Poller::UpdateChannel(Channel* channel) {
   AssertInLoopThread();
-  LOG(INFO) << "fd = " << channel->fd() << " events = " << channel->events();
+  LOG(INFO) << "update: fd = " << channel->fd() << " events = " << channel->events();
   if (channel->index() < 0) {
     // Add a new one，add to poll_fds_
     assert(channels_.find(channel->fd()) == channels_.end());
