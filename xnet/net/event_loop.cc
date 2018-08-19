@@ -1,7 +1,9 @@
 #include "xnet/net/event_loop.h"
 
 #include <sys/eventfd.h>
+#include <signal.h>
 #include <poll.h>
+
 #include "glog/logging.h"
 #include "absl/base/macros.h"
 #include "xnet/net/poller.h"
@@ -10,6 +12,15 @@
 #include "xnet/net/timer_id.h"
 
 namespace details {
+
+class IgnoreSigPipe {
+ public:
+  IgnoreSigPipe() {
+    ::signal(SIGPIPE, SIG_IGN);
+  }
+};
+
+IgnoreSigPipe init_obj;
 thread_local xnet::net::EventLoop* gt_loop_in_this_thread = nullptr;
 }
 
@@ -113,7 +124,7 @@ void EventLoop::Loop() {
     auto now = poller_->Poll(kPollTimeMs, &active_channels_);
     for(ChannelList::iterator it = active_channels_.begin();
         it != active_channels_.end(); ++it) {
-      (*it)->HandleEvent();
+      (*it)->HandleEvent(now);
     }
     DoPendingFunctors();
   }

@@ -4,6 +4,9 @@
 #include <functional>
 #include <memory>
 
+#include "xnet/net/timestamp.h"
+#include "xnet/net/buffer.h"
+
 namespace xnet {
 namespace net {
 
@@ -13,7 +16,9 @@ using TimerCallback = std::function<void()>;
 using CloseCallback =  std::function<void (const TcpConnectionPtr&)>;
 using ConnectionCallback = std::function<void (const TcpConnectionPtr&)>;
 using MessageCallback = std::function<void (const TcpConnectionPtr&,
-                                            const char* data, ssize_t len)>;
+                                            Buffer* buf,
+                                            Timestamp)>;
+using WriteCompleteCallback = std::function<void (const TcpConnectionPtr&)>;
 }  // namespace net
 }  // namespace xnet
 #endif  // XNET_NET_CALLBACKS_H_

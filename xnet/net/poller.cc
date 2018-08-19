@@ -1,6 +1,8 @@
 #include <poll.h>
 #include <assert.h>
 
+#include <chrono>
+
 #include "glog/logging.h"
 #include "xnet/net/poller.h"
 #include "xnet/net/channel.h"
@@ -11,11 +13,11 @@ namespace net {
 Poller::Poller(EventLoop* loop) : own_loop_(loop) { }
 Poller::~Poller() { }
 
-std::chrono::milliseconds Poller::Poll(int timeout_ms,
+Timestamp Poller::Poll(int timeout_ms,
                                       ChanneList* active_channels) {
   LOG(INFO) << "Starting poll" << poll_fds_.size();
   int num_events = ::poll(&*poll_fds_.begin(), poll_fds_.size(), timeout_ms);
-  auto now = std::chrono::system_clock::now();
+  auto now = Timestamp::clock::now();
   if (num_events > 0) {
     LOG(INFO) << num_events << " events happended";
     FillActiveChannels(num_events, active_channels);
@@ -25,7 +27,7 @@ std::chrono::milliseconds Poller::Poll(int timeout_ms,
     LOG(INFO) << "Poller::poll()";
   }
 
-  return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+  return now;
 }
 
 void Poller::FillActiveChannels(int num_events,

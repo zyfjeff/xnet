@@ -1,5 +1,9 @@
 #include "xnet/net/socket.h"
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/tcp.h>
+
 #include <strings.h>
 
 #include "xnet/net/socket_utils.h"
@@ -36,6 +40,15 @@ void Socket::SetReuseAddr(bool on) {
   int optval = on ? 1 : 0;
   ::setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, 
                &optval, sizeof optval);
+}
+
+void Socket::ShutdownWrite() {
+  ::shutdown(sockfd_, SHUT_WR);
+}
+
+void Socket::SetTcpNoDelay(bool on) {
+  int optval = on ? 1 : 0;
+  ::setsockopt(sockfd_, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof optval);
 }
 
 }  // namespace net

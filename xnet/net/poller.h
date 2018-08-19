@@ -7,6 +7,7 @@
 
 #include "xnet/net/event_loop.h"
 #include "xnet/base/macros.h"
+#include "xnet/net/timestamp.h"
 
 struct pollfd;
 
@@ -22,7 +23,7 @@ class Poller {
   using ChanneList = std::vector<Channel*>;
   Poller(EventLoop* loop);
   ~Poller();
-  std::chrono::milliseconds Poll(int timeout_ms, ChanneList* active_channels);
+  Timestamp Poll(int timeout_ms, ChanneList* active_channels);
   void UpdateChannel(Channel* channel);
   void RemoveChannel(Channel* channel);
   bool HasChannel(Channel* channel) const;

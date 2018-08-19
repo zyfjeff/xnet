@@ -12,6 +12,7 @@ namespace net {
 class Acceptor;
 class EventLoop;
 class InetAddress;
+class EventLoopThreadPool;
 
 class TcpServer {
  public:
@@ -21,19 +22,27 @@ class TcpServer {
   void Start();
   void set_connection_callback(const ConnectionCallback& cb) { conn_callback_ = cb; }
   void set_message_callback(const MessageCallback& cb) { msg_callback_ = cb; }
+  void set_write_complete_callback(const WriteCompleteCallback& cb) { write_complete_callback_ = cb; }
+  void set_thread_num(int num);
 
  private:
   void NewConnection(int sockfd, const InetAddress& peer_addr);
+  void RemoveConnection(const TcpConnectionPtr& conn);
+  void RemoveConnectionInLoop(const TcpConnectionPtr& conn);
+
   using ConnectionMap = std::map<std::string, TcpConnectionPtr>;
 
   EventLoop* loop_;
   const std::string name_;
+  std::unique_ptr<EventLoopThreadPool> thread_pool_;
   std::unique_ptr<Acceptor> acceptor_;
   bool started_;
   int next_connid_;
+  
   ConnectionMap connections_;
-  ConnectionCallback conn_callback_;
-  MessageCallback msg_callback_;
+  ConnectionCallback conn_callback_{nullptr};
+  MessageCallback msg_callback_{nullptr};
+  WriteCompleteCallback write_complete_callback_{nullptr};
 };
 
 

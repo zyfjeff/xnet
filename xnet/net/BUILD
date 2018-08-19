@@ -26,11 +26,16 @@ cc_library(
       "tcp_server.cc",
       "tcp_connection.h",
       "tcp_connection.cc",
+      "buffer.h",
+      "buffer.cc",
+      "event_loop_thread_pool.h",
+      "event_loop_thread_pool.cc",
     ],
     copts = DEFAULT_COPTS,
     deps = [
       ":socket_lib",
       "@com_google_absl//absl/base",
+      "@com_google_absl//absl/strings",
       "@com_google_glog//:glog",
       "//xnet/base:base",
     ]

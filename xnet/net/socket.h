@@ -18,6 +18,8 @@ class Socket {
   void Listen();
   int Accept(InetAddress* peeraddr);
   void SetReuseAddr(bool on);
+  void ShutdownWrite();
+  void SetTcpNoDelay(bool on);
  private:
   const int sockfd_;
   DISALLOW_COPY_AND_ASSIGN(Socket);

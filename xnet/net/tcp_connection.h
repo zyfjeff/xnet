@@ -6,6 +6,7 @@
 #include "xnet/net/socket.h"
 #include "xnet/net/callbacks.h"
 #include "xnet/net/inet_address.h"
+#include "xnet/net/buffer.h"
 
 namespace xnet {
 namespace net {
@@ -33,17 +34,31 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     msg_callback_ = cb;
   }
 
+  void set_write_complete_callback(const WriteCompleteCallback& cb) {
+    write_complte_callback_ = cb;
+  }
+
+  void set_close_callback(const CloseCallback& cb) {
+    close_callback_ = cb;
+  }
+
   void ConnectEstablished();
   void ConnectDestroyed();
 
+  void Send(const absl::string_view& str);
+  void Shutdown();
+
+  void SetTcpNodelay(bool on);
+
  private:
-  enum class StateE { kConnecting, kConnected, };
+  enum class StateE { kConnecting, kConnected, kDisconnecting, kDisconnected };
   void SetState(StateE s) { state_ = s; }
-  void HandleRead();
+  void HandleRead(Timestamp receive_time);
   void HandleWrite();
   void HandleClose();
   void HandleError();
-  void SetCloseConnection(const CloseCallback& cb);
+  void SendInLoop(const absl::string_view& str);
+  void ShutdownInLoop();
 
   EventLoop* loop_;
   std::string name_;
@@ -54,9 +69,13 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   InetAddress local_addr_;
   InetAddress peer_addr_;
 
-  ConnectionCallback connection_callback_;
-  MessageCallback msg_callback_;
-  CloseCallback close_callback_;
+  ConnectionCallback connection_callback_{nullptr};
+  MessageCallback msg_callback_{nullptr};
+  CloseCallback close_callback_{nullptr};
+  WriteCompleteCallback write_complte_callback_{nullptr};
+
+  Buffer input_buffer_;
+  Buffer output_buffer_;
 };
 
 typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
